@@ -1,0 +1,111 @@
+plugins {
+    id 'java-library'
+    id 'java'
+    id 'maven-publish'
+}
+
+
+group 'com.xstudio.demo'
+version '1.0.0-SNAPSHOT'
+
+apply plugin: 'idea'
+apply plugin: 'jacoco'
+
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven {
+        url 'http://maven.aliyun.com/nexus/content/groups/public/'
+    }
+    maven {
+        url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'
+    }
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compile "org.projectlombok:lombok:1.18.10"
+    annotationProcessor "org.projectlombok:lombok:1.18.10"
+
+    // https://mvnrepository.com/artifact/com.alibaba/fastjson
+    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.62'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+// 打包源码
+task sourceJar(type: Jar, dependsOn: classes) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourceJar
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("github仓库地址")
+            credentials {
+                username = "github账号"
+                password = "githubtoken"
+            }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = '包ID'
+            from components.java
+            artifact sourceJar
+            artifact javadocJar
+            pom {
+                name = "包ID"
+                description = "gradle github packages demo"
+                url = "github仓库地址"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "beeant0512"
+                        name = "Xiaobiao Huang"
+                        email = "huangxb0512@gmail.com"
+                    }
+                }
+                scm {
+                    connection = "https://maven.pkg.github.com/beeant0512/packagesdemo"
+                    developerConnection = "https://maven.pkg.github.com/beeant0512/packagesdemo"
+                    url = "https://maven.pkg.github.com/beeant0512/packagesdemo"
+                }
+            }
+        }
+    }
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+    options {
+        encoding "UTF-8"
+        charSet 'UTF-8'
+        author true
+        version true
+    }
+}
