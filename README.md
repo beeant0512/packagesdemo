@@ -1,2 +1,2 @@
 # packagesdemo
-github packagesdemo for gradle project
+github packagesdemo publishing for maven project
