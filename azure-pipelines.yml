@@ -1,0 +1,11 @@
+# Starter pipeline
+- task: Gradle@2
+  inputs:
+    gradleWrapperFile: 'gradlew'
+    tasks: 'build'
+    publishJUnitResults: true
+    testResultsFiles: '**/TEST-*.xml'
+    codeCoverageToolOption: 'JaCoCo'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.8'
+    sonarQubeRunAnalysis: false
